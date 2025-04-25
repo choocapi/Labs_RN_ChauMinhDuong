@@ -1,15 +1,17 @@
 # Châu Minh Đương - 2124802010036
 ## Lab 1
+Lab này hôm trước em dùng template project sử dụng router có sẵn của expo, bây giờ em đổi sang template giống thầy để làm được navigation. Nên lịch sử commit không đúng ngày làm bài ạ!
+Mong thầy thông cảm!
 - Phần 1
 
 
-https://github.com/user-attachments/assets/b41c01b8-3f10-4ab4-b394-4ec5d4f20aea
+https://github.com/user-attachments/assets/1177af7c-60ea-4e0d-bbcf-842195c55368
 
 
 - Phần 2
 
 
-https://github.com/user-attachments/assets/88290d6a-bee7-4e18-933c-0b2192b5a8b9
+https://github.com/user-attachments/assets/f525494a-afd5-4208-a736-bf475771c217
 
 
 ## Lab 2
