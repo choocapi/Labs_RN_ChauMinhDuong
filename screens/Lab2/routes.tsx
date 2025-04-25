@@ -1,0 +1,160 @@
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { MaterialIcons } from "@expo/vector-icons";
+import Contacts from "./Contacts";
+import Profile from "./Profile";
+import Favorites from "./Favorites";
+import User from "./User";
+import Options from "./Options";
+import colors from "../../utils/colors";
+
+const getTabBarIcon =
+  (icon: any) =>
+  ({ color }: any) =>
+    <MaterialIcons name={icon} size={26} style={{ color }} />;
+
+const Stack = createNativeStackNavigator();
+
+const ContactsScreens = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="Contacts"
+      screenOptions={{
+        headerTintColor: "white",
+        headerStyle: { backgroundColor: colors.blue },
+        headerTitleAlign: "center",
+      }}
+    >
+      <Stack.Screen
+        name="Contacts"
+        component={Contacts}
+        options={{ title: "Contacts" }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={({ route }) => {
+          const { contact }: any = route.params;
+          const { name } = contact;
+          return {
+            title: name.split(" ")[0],
+            headerTintColor: "white",
+            headerStyle: {
+              backgroundColor: colors.blue,
+            },
+          };
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const FavoritesScreens = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="Favorites"
+      screenOptions={{
+        headerTintColor: "white",
+        headerStyle: { backgroundColor: colors.blue },
+        headerTitleAlign: "center",
+      }}
+    >
+      <Stack.Screen
+        name="Favorites"
+        component={Favorites}
+        options={{ title: "Favorites" }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={({ route }) => {
+          const { contact }: any = route.params;
+          const { name } = contact;
+          return {
+            title: name.split(" ")[0],
+            headerTintColor: "white",
+            headerStyle: {
+              backgroundColor: colors.blue,
+            },
+          };
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const UserScreens = ({navigation}: {navigation: any}) => {
+  return (
+    <Stack.Navigator
+      initialRouteName="User"
+      screenOptions={{
+        headerTintColor: "white",
+        headerStyle: { backgroundColor: colors.blue },
+        headerTitleAlign: "center",
+      }}
+    >
+      <Stack.Screen
+        name="User"
+        component={User}
+        options={{
+          headerTitle: "Me",
+          headerRight: () => (
+            <MaterialIcons
+              name="settings"
+              size={24}
+              style={{ color: "white", marginRight: 10 }}
+              onPress={() => navigation.navigate("Options")}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Options"
+        component={Options}
+        options={{ title: "Options" }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const Tab = createBottomTabNavigator();
+
+const TabNavigator = () => {
+  return (
+    <Tab.Navigator
+      initialRouteName="ContactsScreens"
+      screenOptions={{
+        tabBarStyle: { backgroundColor: colors.blue },
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: colors.white,
+        tabBarInactiveTintColor: colors.greyDark,
+        headerShown: false,
+      }}
+    >
+      <Tab.Screen
+        name="ContactsScreens"
+        component={ContactsScreens}
+        options={{
+          tabBarIcon: getTabBarIcon("list"),
+        }}
+      />
+      <Tab.Screen
+        name="FavoritesScreens"
+        component={FavoritesScreens}
+        options={{
+          tabBarIcon: getTabBarIcon("star"),
+        }}
+      />
+      <Tab.Screen
+        name="UserScreens"
+        component={UserScreens}
+        options={{
+          tabBarIcon: getTabBarIcon("person"),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+export default TabNavigator;
