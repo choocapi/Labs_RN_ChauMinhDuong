@@ -6,7 +6,6 @@ import Contacts from "./Contacts";
 import Profile from "./Profile";
 import Favorites from "./Favorites";
 import User from "./User";
-import Options from "./Options";
 import colors from "../../utils/colors";
 
 const getTabBarIcon =
@@ -108,11 +107,6 @@ const UserScreens = ({navigation}: {navigation: any}) => {
             />
           ),
         }}
-      />
-      <Stack.Screen
-        name="Options"
-        component={Options}
-        options={{ title: "Options" }}
       />
     </Stack.Navigator>
   );
