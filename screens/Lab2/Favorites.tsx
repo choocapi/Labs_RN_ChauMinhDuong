@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  ActivityIndicator,
-  Dimensions,
-} from "react-native";
 import { fetchContacts } from "../../utils/api";
 import ContactThumbnail from "../../components/ContactThumbnail";
 import colors from "../../utils/colors";
+import { ActivityIndicator, Dimensions, FlatList, View, Text, StyleSheet } from "react-native";
 
 const keyExtractor = ({ phone }: any) => phone;
 const numColumns = 3;

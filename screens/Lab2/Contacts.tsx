@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
+import { StyleSheet, Text, View, FlatList, ActivityIndicator } from "react-native";
 import ContactListItem from "../../components/ContactListItem";
 import { fetchContacts } from "../../utils/api";
 import colors from "../../utils/colors";
