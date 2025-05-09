@@ -12,7 +12,8 @@ import {
   ServiceDetailScreen,
   CustomerScreen,
   TransactionScreen,
-  HomeScreen,
+  HomeAdminScreen,
+  HomeCustomerScreen,
   ForgotPasswordScreen,
   LoginScreen,
   RegisterScreen,
@@ -20,6 +21,8 @@ import {
   ProfileScreen,
 } from "@/screens/Lab3";
 import { PaperProvider } from "react-native-paper";
+import { AuthProvider } from "./context/authContext";
+import AdminInitializer from "./screens/Lab3/AdminInitalizer";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -30,20 +33,27 @@ const getTabBarIcon =
 
 export default function App() {
   return (
-    <PaperProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="KamiSpa_Auth"
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="KamiSpa_Auth" component={KamiSpa_Auth} />
-          <Stack.Screen name="KamiSpa_Main" component={KamiSpa_Main} />
-          <Stack.Screen name="Index" component={Index} />
-          <Stack.Screen name="Lab2" component={ContactsNavigator} />
-          <Stack.Screen name="Options" component={OptionsScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <AuthProvider>
+      <AdminInitializer />
+      <PaperProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="KamiSpa_Auth"
+            screenOptions={{ headerShown: false }}
+          >
+            <Stack.Screen name="KamiSpa_Auth" component={KamiSpa_Auth} />
+            <Stack.Screen name="KamiSpa_Admin" component={KamiSpa_Admin} />
+            <Stack.Screen
+              name="KamiSpa_Customer"
+              component={KamiSpa_Customer}
+            />
+            <Stack.Screen name="Index" component={Index} />
+            <Stack.Screen name="Lab2" component={ContactsNavigator} />
+            <Stack.Screen name="Options" component={OptionsScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </AuthProvider>
   );
 }
 
@@ -60,23 +70,23 @@ const KamiSpa_Auth = () => {
   );
 };
 
-const KamiSpa_Main = () => {
+const KamiSpa_Admin = () => {
   return (
     <Stack.Navigator
-      initialRouteName="KamiSpa_BottomNav"
+      initialRouteName="KamiSpa_Admin_BottomNav"
       screenOptions={{
         header: (props: any) => <CustomNavigationBar {...props} />,
       }}
     >
       <Stack.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeAdminScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ headerShown: false }}
+        options={{ title: "Profile" }}
       />
       <Stack.Screen
         name="AddService"
@@ -89,15 +99,47 @@ const KamiSpa_Main = () => {
         options={{ title: "Service detail" }}
       />
       <Stack.Screen
-        name="KamiSpa_BottomNav"
-        component={KamiSpa_BottomNav}
+        name="KamiSpa_Admin_BottomNav"
+        component={KamiSpa_Admin_BottomNav}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
 };
 
-const KamiSpa_BottomNav = () => {
+const KamiSpa_Customer = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="KamiSpa_Customer_BottomNav"
+      screenOptions={{
+        header: (props: any) => <CustomNavigationBar {...props} />,
+      }}
+    >
+      <Stack.Screen
+        name="Home"
+        component={HomeCustomerScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ title: "Profile" }}
+      />
+      <Stack.Screen
+        name="ServiceDetail"
+        component={ServiceDetailScreen}
+        options={{ title: "Service detail" }}
+      />
+      <Stack.Screen
+        name="KamiSpa_Customer_BottomNav"
+        component={KamiSpa_Customer_BottomNav}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const KamiSpa_Admin_BottomNav = () => {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -108,7 +150,7 @@ const KamiSpa_BottomNav = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeAdminScreen}
         options={{ tabBarIcon: getTabBarIcon("home") }}
       />
       <Tab.Screen
@@ -120,6 +162,29 @@ const KamiSpa_BottomNav = () => {
         name="Customer"
         component={CustomerScreen}
         options={{ tabBarIcon: getTabBarIcon("person-outline") }}
+      />
+      <Tab.Screen
+        name="Setting"
+        component={SettingScreen}
+        options={{ tabBarIcon: getTabBarIcon("settings") }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+const KamiSpa_Customer_BottomNav = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.greyLight,
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeCustomerScreen}
+        options={{ tabBarIcon: getTabBarIcon("home") }}
       />
       <Tab.Screen
         name="Setting"

@@ -6,11 +6,15 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, HelperText, TextInput } from "react-native-paper";
 import colors from "@/utils/colors";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from "@/context/authContext";
+import { getDoc } from "firebase/firestore";
+import { firestore } from "@/config/firebase";
 import { auth } from "@/config/firebase";
+import { doc } from "firebase/firestore";
+import { UserType } from "@/types";
 
 const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
@@ -20,6 +24,7 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const { login } = useAuth();
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,27 +53,14 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
     }
   };
 
-  const login = async (email: string, password: string) => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      return { success: true, msg: "Đăng nhập thành công!" };
-    } catch (error: any) {
-      let msg = error.message;
-      if (msg.includes("(auth/invalid-credential)"))
-        msg = "Email hoặc mật khẩu không chính xác";
-      if (msg.includes("(auth/network-request-failed)"))
-        msg = "Mạng không ổn định";
-      return { success: false, msg };
-    }
-  };
-
   const handleLogin = async () => {
     const isEmailError = validateEmail(email);
     const isPasswordError = validatePassword(password);
     setEmailError(isEmailError);
     setPasswordError(isPasswordError);
-    if (isEmailError && isPasswordError) {
+    if (isEmailError || isPasswordError) {
       Alert.alert("Cảnh báo", "Vui lòng nhập đầy đủ thông tin!");
+      return;
     }
 
     const res = await login(email, password);
@@ -76,8 +68,13 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
       Alert.alert("Thành công", res.msg, [
         {
           text: "Ok",
-          onPress: () => navigation.navigate("KamiSpa_Main"),
-          style: "destructive",
+          onPress: () => {
+            if (res.role === "admin") {
+              navigation.replace("KamiSpa_Admin");
+            } else if (res.role === "customer") {
+              navigation.replace("KamiSpa_Customer");
+            }
+          },
         },
       ]);
     } else {

@@ -5,6 +5,7 @@ import {
   Alert,
   View,
   Image,
+  ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 import { HelperText, Button, TextInput } from "react-native-paper";
@@ -12,6 +13,7 @@ import colors from "@/utils/colors";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, firestore } from "@/config/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { useAuth } from "@/context/authContext";
 
 const RegisterScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
@@ -28,6 +30,7 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const { register } = useAuth();
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -79,28 +82,6 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
     }
   };
 
-  const register = async (email: string, password: string, name: string) => {
-    try {
-      let response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      await setDoc(doc(firestore, "users", response?.user?.uid), {
-        name,
-        email,
-        uid: response?.user?.uid,
-      });
-      return { success: true, msg: "Đăng ký thành công!" };
-    } catch (error: any) {
-      let msg = error.message;
-      if (msg.includes("(auth/email-already-in-use)")) msg = "Email đã tồn tại";
-      if (msg.includes("(auth/network-request-failed)"))
-        msg = "Mạng không ổn định";
-      return { success: false, msg };
-    }
-  };
-
   const handleRegister = async () => {
     const isEmailError = validateEmail(email);
     const isPasswordError = validatePassword(password);
@@ -118,7 +99,7 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
       Alert.alert("Thành công", res.msg, [
         {
           text: "Ok",
-          onPress: () => navigation.navigate("KamiSpa_Auth"),
+          onPress: () => navigation.navigate("Login"),
           style: "destructive",
         },
       ]);
@@ -128,123 +109,129 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image
-          resizeMode="contain"
-          source={require("@/assets/logolab3.png")}
-          style={styles.logo}
-        />
-        <Text style={styles.title}>Create a new account</Text>
-      </View>
-      <View style={styles.formContainer}>
-        {/* input name */}
-        <TextInput
-          placeholder="Enter name"
-          left={<TextInput.Icon icon="rename-box" />}
-          mode="outlined"
-          value={name}
-          onChangeText={(name) => {
-            setName(name);
-            setNameError(validateName(name));
-          }}
-          autoCapitalize="none"
-          theme={{
-            colors: {
-              primary: colors.primary,
-            },
-          }}
-        />
-        <HelperText type="error" visible={nameError}>
-          {msgHelperName}
-        </HelperText>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            resizeMode="contain"
+            source={require("@/assets/logolab3.png")}
+            style={styles.logo}
+          />
+          <Text style={styles.title}>Create a new account</Text>
+        </View>
+        <View style={styles.formContainer}>
+          {/* input name */}
+          <TextInput
+            placeholder="Enter name"
+            left={<TextInput.Icon icon="rename-box" />}
+            mode="outlined"
+            value={name}
+            onChangeText={(name) => {
+              setName(name);
+              setNameError(validateName(name));
+            }}
+            autoCapitalize="none"
+            theme={{
+              colors: {
+                primary: colors.primary,
+              },
+            }}
+          />
+          <HelperText type="error" visible={nameError}>
+            {msgHelperName}
+          </HelperText>
 
-        {/* input email */}
-        <TextInput
-          placeholder="Enter email"
-          left={<TextInput.Icon icon="email-outline" />}
-          mode="outlined"
-          value={email}
-          onChangeText={(email) => {
-            setEmail(email);
-            setEmailError(validateEmail(email));
-          }}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          theme={{
-            colors: {
-              primary: colors.primary,
-            },
-          }}
-        />
-        <HelperText type="error" visible={emailError}>
-          {msgHelperEmail}
-        </HelperText>
+          {/* input email */}
+          <TextInput
+            placeholder="Enter email"
+            left={<TextInput.Icon icon="email-outline" />}
+            mode="outlined"
+            value={email}
+            onChangeText={(email) => {
+              setEmail(email);
+              setEmailError(validateEmail(email));
+            }}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            theme={{
+              colors: {
+                primary: colors.primary,
+              },
+            }}
+          />
+          <HelperText type="error" visible={emailError}>
+            {msgHelperEmail}
+          </HelperText>
 
-        {/* input password */}
-        <TextInput
-          placeholder="Enter password"
-          left={<TextInput.Icon icon="lock-outline" />}
-          right={
-            <TextInput.Icon
-              icon={showPassword ? "eye-off" : "eye"}
-              onPress={() => setShowPassword(!showPassword)}
-            />
-          }
-          mode="outlined"
-          value={password}
-          onChangeText={(password) => {
-            setPassword(password);
-            setPasswordError(validatePassword(password));
-          }}
-          secureTextEntry={!showPassword}
-          theme={{
-            colors: {
-              primary: colors.primary,
-            },
-          }}
-        />
-        <HelperText type="error" visible={passwordError}>
-          {msgHelperPassword}
-        </HelperText>
-        <TextInput
-          placeholder="Confirm password"
-          left={<TextInput.Icon icon="lock-outline" />}
-          right={
-            <TextInput.Icon
-              icon={showConfirmPassword ? "eye-off" : "eye"}
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            />
-          }
-          mode="outlined"
-          value={confirmPassword}
-          onChangeText={(confirmPassword) => {
-            setConfirmPassword(confirmPassword);
-            setConfirmPasswordError(validateConfirmPassword(confirmPassword));
-          }}
-          secureTextEntry={!showConfirmPassword}
-          theme={{
-            colors: {
-              primary: colors.primary,
-            },
-          }}
-        />
-        <HelperText type="error" visible={confirmPasswordError}>
-          {msgHelperConfirmPassword}
-        </HelperText>
-        <Button mode="contained" onPress={handleRegister} style={styles.button}>
-          <Text style={styles.buttonText}>Sign up</Text>
-        </Button>
+          {/* input password */}
+          <TextInput
+            placeholder="Enter password"
+            left={<TextInput.Icon icon="lock-outline" />}
+            right={
+              <TextInput.Icon
+                icon={showPassword ? "eye-off" : "eye"}
+                onPress={() => setShowPassword(!showPassword)}
+              />
+            }
+            mode="outlined"
+            value={password}
+            onChangeText={(password) => {
+              setPassword(password);
+              setPasswordError(validatePassword(password));
+            }}
+            secureTextEntry={!showPassword}
+            theme={{
+              colors: {
+                primary: colors.primary,
+              },
+            }}
+          />
+          <HelperText type="error" visible={passwordError}>
+            {msgHelperPassword}
+          </HelperText>
+          <TextInput
+            placeholder="Confirm password"
+            left={<TextInput.Icon icon="lock-outline" />}
+            right={
+              <TextInput.Icon
+                icon={showConfirmPassword ? "eye-off" : "eye"}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              />
+            }
+            mode="outlined"
+            value={confirmPassword}
+            onChangeText={(confirmPassword) => {
+              setConfirmPassword(confirmPassword);
+              setConfirmPasswordError(validateConfirmPassword(confirmPassword));
+            }}
+            secureTextEntry={!showConfirmPassword}
+            theme={{
+              colors: {
+                primary: colors.primary,
+              },
+            }}
+          />
+          <HelperText type="error" visible={confirmPasswordError}>
+            {msgHelperConfirmPassword}
+          </HelperText>
+          <Button
+            mode="contained"
+            onPress={handleRegister}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Sign up</Text>
+          </Button>
+        </View>
+        <View style={styles.linkContainer}>
+          <TouchableOpacity
+            style={styles.linkButton}
+            onPress={() => navigation.navigate("Login")}
+          >
+            <Text style={styles.linkText}>Already have an account?</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.linkContainer}>
-        <TouchableOpacity
-          style={styles.linkButton}
-          onPress={() => navigation.navigate("Login")}
-        >
-          <Text style={styles.linkText}>Already have an account?</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 

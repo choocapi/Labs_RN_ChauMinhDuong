@@ -5,6 +5,7 @@ import colors from "@/utils/colors";
 import { doc, deleteDoc } from "firebase/firestore";
 import { firestore } from "@/config/firebase";
 import { Alert } from "react-native";
+import { useAuth } from "@/context/authContext";
 
 const CustomNavigationBar = ({ navigation, route, options, back }: any) => {
   const [visible, setVisible] = useState(false);
@@ -12,6 +13,7 @@ const CustomNavigationBar = ({ navigation, route, options, back }: any) => {
   const closeMenu = () => setVisible(false);
   const title = getHeaderTitle(options, route.name);
   const service = route.params?.service;
+  const { user } = useAuth();
 
   const handleEditService = () => {
     if (!service) return;
@@ -54,7 +56,7 @@ const CustomNavigationBar = ({ navigation, route, options, back }: any) => {
         title={title}
         titleStyle={{ color: "white", fontSize: 20, fontWeight: "bold" }}
       />
-      {!back || route.name === "ServiceDetail" ? (
+      {!back || (route.name === "ServiceDetail" && user?.role === "admin") ? (
         <Menu
           visible={visible}
           onDismiss={closeMenu}

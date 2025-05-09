@@ -1,7 +1,8 @@
 export { default as LoginScreen } from "./LoginScreen";
 export { default as RegisterScreen } from "./RegisterScreen";
 export { default as ForgotPasswordScreen } from "./ForgotPasswordScreen";
-export { default as HomeScreen } from "./HomeScreen";
+export { default as HomeAdminScreen } from "./HomeAdminScreen";
+export { default as HomeCustomerScreen } from "./HomeCustomerScreen";
 export { default as AddServiceScreen } from "./AddServiceScreen";
 export { default as ServiceDetailScreen } from "./ServiceDetailScreen";
 export { default as SettingScreen } from "./SettingScreen";

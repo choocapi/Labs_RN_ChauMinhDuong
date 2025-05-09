@@ -8,69 +8,16 @@ import {
   Image,
   StatusBar,
 } from "react-native";
-import {
-  collection,
-  onSnapshot,
-  query,
-  orderBy,
-  Timestamp,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { firestore } from "@/config/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/config/firebase";
 import colors from "@/utils/colors";
 import { PlusCircle, UserCircle } from "phosphor-react-native";
+import { useAuth } from "@/context/authContext";
+import { Service } from "@/types";
 
-type UserType = {
-  uid: string;
-  email: string | null;
-  name: string | null;
-};
-
-type Service = {
-  id: string;
-  name: string;
-  price: number;
-  creator: string;
-  createdAt: Date | Timestamp | string;
-  updatedAt: Date | Timestamp | string;
-};
-
-const HomeScreen = ({ navigation }: { navigation: any }) => {
+const HomeCustomerScreen = ({ navigation }: { navigation: any }) => {
   const [services, setServices] = useState<Service[]>([]);
-  const [user, setUser] = useState<UserType | null>(null);
-
-  // fetch user info in firestore
-  const fetchUserData = async (uid: string) => {
-    try {
-      const userDoc = await getDoc(doc(firestore, "users", uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setUser({
-          uid: uid,
-          email: userData.email,
-          name: userData.name,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-
-  // check user logged in before
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        fetchUserData(firebaseUser.uid);
-      } else {
-        setUser(null);
-        navigation.navigate("KamiSpa_Auth");
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+  const { user } = useAuth();
 
   // fetch services
   useEffect(() => {
@@ -98,12 +45,25 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
 
     return (
       <TouchableOpacity style={styles.serviceItem} onPress={openServiceDetail}>
-        <Text style={styles.serviceName} numberOfLines={1}>
-          {item.name}
-        </Text>
-        <Text style={styles.servicePrice}>
-          {item.price?.toLocaleString()} ₫
-        </Text>
+        {item.imageUrl ? (
+          <Image
+            source={{ uri: item.imageUrl }}
+            style={styles.serviceImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.serviceImagePlaceholder}>
+            <Text style={styles.serviceImagePlaceholderText}>No Image</Text>
+          </View>
+        )}
+        <View style={styles.serviceInfo}>
+          <Text style={styles.serviceName} numberOfLines={1}>
+            {item.name}
+          </Text>
+          <Text style={styles.servicePrice}>
+            {item.price?.toLocaleString()} ₫
+          </Text>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -127,12 +87,6 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
       </View>
       <View style={styles.listHeader}>
         <Text style={styles.listTitle}>Danh sách dịch vụ</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate("AddService")}
-        >
-          <PlusCircle weight="fill" size={32} color={colors.primary} />
-        </TouchableOpacity>
       </View>
       <FlatList
         data={services}
@@ -197,20 +151,40 @@ const styles = StyleSheet.create({
   serviceItem: {
     backgroundColor: "#fafafa",
     borderRadius: 10,
-    padding: 16,
+    padding: 12,
     marginHorizontal: 16,
     marginVertical: 6,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: "#eee",
+  },
+  serviceImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 12,
+  },
+  serviceImagePlaceholder: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: "#eee",
+    marginRight: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  serviceImagePlaceholderText: {
+    color: "#999",
+    fontSize: 12,
+  },
+  serviceInfo: {
+    flex: 1,
   },
   serviceName: {
     fontSize: 16,
     color: "#222",
-    flex: 1,
-    marginRight: 10,
+    marginBottom: 4,
   },
   servicePrice: {
     fontSize: 15,
@@ -219,4 +193,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default HomeCustomerScreen;
