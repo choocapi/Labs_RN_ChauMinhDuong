@@ -29,4 +29,5 @@ export type AuthContextType = {
     name: string
   ) => Promise<{ success: boolean; msg: string }>;
   logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ success: boolean; msg: string }>;
 };

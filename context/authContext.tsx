@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth, firestore } from "@/config/firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -92,8 +93,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return { success: true, msg: "Email đặt lại mật khẩu đã được gửi!" };
+    } catch (error: any) {
+      let msg = error.message;
+      if (msg.includes("(auth/user-not-found)")) msg = "Email không tồn tại";
+      if (msg.includes("(auth/network-request-failed)"))
+        msg = "Mạng không ổn định";
+      return { success: false, msg };
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, login, register, logout, resetPassword }}
+    >
       {children}
     </AuthContext.Provider>
   );

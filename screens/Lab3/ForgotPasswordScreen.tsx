@@ -5,15 +5,19 @@ import {
   TouchableOpacity,
   View,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { TextInput, Button, HelperText } from "react-native-paper";
 import colors from "@/utils/colors";
+import { useAuth } from "@/context/authContext";
 
 const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
+  const { resetPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [msgHelperEmail, setMsgHelperEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,11 +33,28 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
     }
   };
 
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
     const isEmailError = validateEmail(email);
     setEmailError(isEmailError);
     if (!isEmailError) {
-      Alert.alert("Reset password info", `Email: ${email}`);
+      try {
+        setLoading(true);
+        const result = await resetPassword(email);
+        if (result.success) {
+          Alert.alert("Thành công", result.msg, [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate("Login"),
+            },
+          ]);
+        } else {
+          Alert.alert("Lỗi", result.msg);
+        }
+      } catch (error) {
+        Alert.alert("Lỗi", "Đã xảy ra lỗi");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -64,6 +85,7 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
               primary: colors.primary,
             },
           }}
+          disabled={loading}
         />
         <HelperText type="error" visible={emailError}>
           {msgHelperEmail}
@@ -72,14 +94,20 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
           mode="contained"
           onPress={handleResetPassword}
           style={styles.button}
+          disabled={loading}
         >
-          <Text style={styles.buttonText}>Send reset password</Text>
+          {loading ? (
+            <ActivityIndicator color={colors.white} />
+          ) : (
+            <Text style={styles.buttonText}>Send reset password</Text>
+          )}
         </Button>
       </View>
       <View style={styles.linkContainer}>
         <TouchableOpacity
           style={styles.linkButton}
           onPress={() => navigation.navigate("Login")}
+          disabled={loading}
         >
           <Text style={styles.linkText}>Back to login</Text>
         </TouchableOpacity>

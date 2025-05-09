@@ -6,15 +6,10 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, HelperText, TextInput } from "react-native-paper";
 import colors from "@/utils/colors";
 import { useAuth } from "@/context/authContext";
-import { getDoc } from "firebase/firestore";
-import { firestore } from "@/config/firebase";
-import { auth } from "@/config/firebase";
-import { doc } from "firebase/firestore";
-import { UserType } from "@/types";
 
 const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
