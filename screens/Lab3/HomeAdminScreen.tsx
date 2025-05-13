@@ -10,15 +10,22 @@ import {
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { firestore } from "@/config/firebase";
 import colors from "@/utils/colors";
-import { PlusCircle, UserCircle } from "phosphor-react-native";
+import { PlusCircle, UserCircle, MagnifyingGlass } from "phosphor-react-native";
 import { useAuth } from "@/context/authContext";
 import { Service } from "@/types";
 import { formatCurrency } from "@/utils/common";
 import { Image } from "expo-image";
+import { TextInput } from "react-native-paper";
 
 const HomeAdminScreen = ({ navigation }: { navigation: any }) => {
   const [services, setServices] = useState<Service[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
+
+  // Filter services based on search query
+  const filteredServices = services.filter((service) =>
+    service.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // fetch services
   useEffect(() => {
@@ -84,6 +91,27 @@ const HomeAdminScreen = ({ navigation }: { navigation: any }) => {
           contentFit="contain"
         />
       </View>
+      <View style={styles.searchContainer}>
+        <TextInput
+          mode="outlined"
+          placeholder="Tìm kiếm dịch vụ..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          style={styles.searchInput}
+          left={
+            <TextInput.Icon
+              icon={() => <MagnifyingGlass size={20} color={colors.primary} />}
+            />
+          }
+          right={
+            searchQuery ? (
+              <TextInput.Icon icon="close" onPress={() => setSearchQuery("")} />
+            ) : null
+          }
+          outlineColor={colors.primary}
+          activeOutlineColor={colors.primary}
+        />
+      </View>
       <View style={styles.listHeader}>
         <Text style={styles.listTitle}>Danh sách dịch vụ</Text>
         <TouchableOpacity
@@ -94,10 +122,19 @@ const HomeAdminScreen = ({ navigation }: { navigation: any }) => {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={services}
+        data={filteredServices}
         keyExtractor={(item) => item.id}
         renderItem={renderItems}
         contentContainerStyle={{ paddingBottom: 80 }}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              {searchQuery
+                ? "Không tìm thấy dịch vụ phù hợp"
+                : "Chưa có dịch vụ nào"}
+            </Text>
+          </View>
+        }
       />
       <StatusBar backgroundColor={colors.primary} />
     </View>
@@ -197,6 +234,24 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontWeight: "bold",
     marginBottom: 4,
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  searchInput: {
+    backgroundColor: "white",
+    fontSize: 16,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 32,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#666",
   },
 });
 
