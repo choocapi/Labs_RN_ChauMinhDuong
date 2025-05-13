@@ -4,16 +4,14 @@ import {
   TouchableOpacity,
   Alert,
   View,
-  Image,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { HelperText, Button, TextInput } from "react-native-paper";
 import colors from "@/utils/colors";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, firestore } from "@/config/firebase";
-import { doc, setDoc } from "firebase/firestore";
 import { useAuth } from "@/context/authContext";
+import { Image } from "expo-image";
 
 const RegisterScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
@@ -30,6 +28,7 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -83,6 +82,7 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
   };
 
   const handleRegister = async () => {
+    setIsLoading(true);
     const isEmailError = validateEmail(email);
     const isPasswordError = validatePassword(password);
     const isConfirmPasswordError = validateConfirmPassword(confirmPassword);
@@ -106,6 +106,7 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
     } else {
       Alert.alert("Lỗi", res.msg);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -113,7 +114,7 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image
-            resizeMode="contain"
+            contentFit="contain"
             source={require("@/assets/logolab3.png")}
             style={styles.logo}
           />
@@ -218,8 +219,15 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
             mode="contained"
             onPress={handleRegister}
             style={styles.button}
+            disabled={isLoading}
           >
-            <Text style={styles.buttonText}>Sign up</Text>
+            <Text style={styles.buttonText}>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                "Sign up"
+              )}
+            </Text>
           </Button>
         </View>
         <View style={styles.linkContainer}>

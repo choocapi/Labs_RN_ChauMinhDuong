@@ -9,21 +9,23 @@ import {
 } from "firebase/firestore";
 import { firestore, auth } from "@/config/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from "@/context/authContext";
 
-const admin = {
+const adminInfo = {
   name: "Admin",
   email: "admin@gmail.com",
   password: "cmd@0556",
   role: "admin",
 };
 
-export default function AdminInitializer() {
+export default function AppInitializer({ navigation }: { navigation: any }) {
+  const { user } = useAuth();
   useEffect(() => {
     const checkAdmin = async () => {
       const q = query(
         collection(firestore, "users"),
         where("role", "==", "admin"),
-        where("email", "==", admin.email)
+        where("email", "==", adminInfo.email)
       );
       const querySnapshot = await getDocs(q);
 
@@ -31,13 +33,13 @@ export default function AdminInitializer() {
         try {
           const userCredential = await createUserWithEmailAndPassword(
             auth,
-            admin.email,
-            admin.password
+            adminInfo.email,
+            adminInfo.password
           );
           await setDoc(doc(firestore, "users", userCredential.user.uid), {
-            name: admin.name,
-            email: admin.email,
-            role: admin.role,
+            name: adminInfo.name,
+            email: adminInfo.email,
+            role: adminInfo.role,
             uid: userCredential.user.uid,
           });
         } catch (error) {
@@ -46,7 +48,15 @@ export default function AdminInitializer() {
       }
     };
     checkAdmin();
-  }, []);
+    if (!auth.currentUser) {
+      navigation.replace("KamiSpa_Auth");
+      return;
+    }
+
+    const route =
+      user?.role === "customer" ? "KamiSpa_Customer" : "KamiSpa_Admin";
+    navigation.replace(route);
+  }, [navigation, user]);
 
   return null;
 }

@@ -2,14 +2,15 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   Alert,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { Button, HelperText, TextInput } from "react-native-paper";
 import colors from "@/utils/colors";
 import { useAuth } from "@/context/authContext";
+import { Image } from "expo-image";
 
 const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -49,6 +51,7 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
   };
 
   const handleLogin = async () => {
+    setIsLoading(true);
     const isEmailError = validateEmail(email);
     const isPasswordError = validatePassword(password);
     setEmailError(isEmailError);
@@ -75,13 +78,14 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
     } else {
       Alert.alert("Lỗi", res.msg);
     }
+    setIsLoading(false);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
-          resizeMode="contain"
+          contentFit="contain"
           source={require("@/assets/logolab3.png")}
           style={styles.logo}
         />
@@ -138,8 +142,19 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
           {msgHelperPassword}
         </HelperText>
 
-        <Button mode="contained" onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
+        <Button
+          mode="contained"
+          onPress={handleLogin}
+          style={styles.button}
+          disabled={isLoading}
+        >
+          <Text style={styles.buttonText}>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              "Login"
+            )}
+          </Text>
         </Button>
       </View>
       <View style={styles.linkContainer}>

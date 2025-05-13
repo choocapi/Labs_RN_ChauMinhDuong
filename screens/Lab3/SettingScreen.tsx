@@ -20,7 +20,7 @@ const SettingScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
+        <Text style={styles.headerTitle}>Cài đặt</Text>
       </View>
 
       <ScrollView style={styles.content}>

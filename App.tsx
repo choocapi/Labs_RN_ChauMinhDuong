@@ -19,10 +19,13 @@ import {
   RegisterScreen,
   SettingScreen,
   ProfileScreen,
+  AppInitializer,
+  EditProfileScreen,
+  ChangePasswordScreen,
+  AppointmentScreen,
 } from "@/screens/Lab3";
 import { PaperProvider } from "react-native-paper";
 import { AuthProvider } from "./context/authContext";
-import AdminInitializer from "./screens/Lab3/AdminInitalizer";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,13 +37,13 @@ const getTabBarIcon =
 export default function App() {
   return (
     <AuthProvider>
-      <AdminInitializer />
       <PaperProvider>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="KamiSpa_Auth"
+            initialRouteName="AppInit"
             screenOptions={{ headerShown: false }}
           >
+            <Stack.Screen name="AppInit" component={AppInitializer} />
             <Stack.Screen name="KamiSpa_Auth" component={KamiSpa_Auth} />
             <Stack.Screen name="KamiSpa_Admin" component={KamiSpa_Admin} />
             <Stack.Screen
@@ -63,9 +66,21 @@ const KamiSpa_Auth = () => {
       initialRouteName="Login"
       screenOptions={{ headerShown: false }}
     >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{ title: "Đăng nhập" }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{ title: "Đăng ký" }}
+      />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPasswordScreen}
+        options={{ title: "Quên mật khẩu" }}
+      />
     </Stack.Navigator>
   );
 };
@@ -86,17 +101,27 @@ const KamiSpa_Admin = () => {
       <Stack.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ title: "Profile" }}
+        options={{ title: "Hồ sơ" }}
       />
       <Stack.Screen
         name="AddService"
         component={AddServiceScreen}
-        options={{ title: "Service" }}
+        options={{ title: "Thêm dịch vụ" }}
       />
       <Stack.Screen
         name="ServiceDetail"
         component={ServiceDetailScreen}
-        options={{ title: "Service detail" }}
+        options={{ title: "Chi tiết dịch vụ" }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ title: "Chỉnh sửa hồ sơ" }}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
+        options={{ title: "Đổi mật khẩu" }}
       />
       <Stack.Screen
         name="KamiSpa_Admin_BottomNav"
@@ -123,12 +148,22 @@ const KamiSpa_Customer = () => {
       <Stack.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ title: "Profile" }}
+        options={{ title: "Hồ sơ" }}
       />
       <Stack.Screen
         name="ServiceDetail"
         component={ServiceDetailScreen}
-        options={{ title: "Service detail" }}
+        options={{ title: "Chi tiết dịch vụ" }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ title: "Chỉnh sửa hồ sơ" }}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
+        options={{ title: "Đổi mật khẩu" }}
       />
       <Stack.Screen
         name="KamiSpa_Customer_BottomNav"
@@ -151,22 +186,34 @@ const KamiSpa_Admin_BottomNav = () => {
       <Tab.Screen
         name="Home"
         component={HomeAdminScreen}
-        options={{ tabBarIcon: getTabBarIcon("home") }}
+        options={{
+          tabBarIcon: getTabBarIcon("home"),
+          title: "Trang chủ",
+        }}
       />
       <Tab.Screen
         name="Transaction"
         component={TransactionScreen}
-        options={{ tabBarIcon: getTabBarIcon("money") }}
+        options={{
+          tabBarIcon: getTabBarIcon("money"),
+          title: "Lịch đặt",
+        }}
       />
       <Tab.Screen
         name="Customer"
         component={CustomerScreen}
-        options={{ tabBarIcon: getTabBarIcon("person-outline") }}
+        options={{
+          tabBarIcon: getTabBarIcon("person-outline"),
+          title: "Khách hàng",
+        }}
       />
       <Tab.Screen
         name="Setting"
         component={SettingScreen}
-        options={{ tabBarIcon: getTabBarIcon("settings") }}
+        options={{
+          tabBarIcon: getTabBarIcon("settings"),
+          title: "Cài đặt",
+        }}
       />
     </Tab.Navigator>
   );
@@ -184,12 +231,26 @@ const KamiSpa_Customer_BottomNav = () => {
       <Tab.Screen
         name="Home"
         component={HomeCustomerScreen}
-        options={{ tabBarIcon: getTabBarIcon("home") }}
+        options={{
+          tabBarIcon: getTabBarIcon("home"),
+          title: "Trang chủ",
+        }}
       />
       <Tab.Screen
-        name="Setting"
+        name="Appointments"
+        component={AppointmentScreen}
+        options={{
+          tabBarIcon: getTabBarIcon("calendar-month"),
+          title: "Lịch đặt",
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
         component={SettingScreen}
-        options={{ tabBarIcon: getTabBarIcon("settings") }}
+        options={{
+          tabBarIcon: getTabBarIcon("settings"),
+          title: "Cài đặt",
+        }}
       />
     </Tab.Navigator>
   );

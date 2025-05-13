@@ -5,21 +5,16 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Image,
   StatusBar,
 } from "react-native";
-import {
-  collection,
-  onSnapshot,
-  query,
-  orderBy,
-  Timestamp,
-} from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { firestore } from "@/config/firebase";
 import colors from "@/utils/colors";
 import { PlusCircle, UserCircle } from "phosphor-react-native";
 import { useAuth } from "@/context/authContext";
 import { Service } from "@/types";
+import { formatCurrency } from "@/utils/common";
+import { Image } from "expo-image";
 
 const HomeAdminScreen = ({ navigation }: { navigation: any }) => {
   const [services, setServices] = useState<Service[]>([]);
@@ -55,7 +50,7 @@ const HomeAdminScreen = ({ navigation }: { navigation: any }) => {
           <Image
             source={{ uri: item.imageUrl }}
             style={styles.serviceImage}
-            resizeMode="cover"
+            contentFit="cover"
           />
         ) : (
           <View style={styles.serviceImagePlaceholder}>
@@ -66,9 +61,7 @@ const HomeAdminScreen = ({ navigation }: { navigation: any }) => {
           <Text style={styles.serviceName} numberOfLines={1}>
             {item.name}
           </Text>
-          <Text style={styles.servicePrice}>
-            {item.price?.toLocaleString()} ₫
-          </Text>
+          <Text style={styles.servicePrice}>{formatCurrency(item.price)}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -88,7 +81,7 @@ const HomeAdminScreen = ({ navigation }: { navigation: any }) => {
         <Image
           source={require("@/assets/logolab3.png")}
           style={styles.logo}
-          resizeMode="contain"
+          contentFit="contain"
         />
       </View>
       <View style={styles.listHeader}>
@@ -195,13 +188,15 @@ const styles = StyleSheet.create({
   },
   serviceName: {
     fontSize: 16,
+    fontWeight: "bold",
     color: "#222",
     marginBottom: 4,
   },
   servicePrice: {
     fontSize: 15,
-    color: "gray",
+    color: colors.primary,
     fontWeight: "bold",
+    marginBottom: 4,
   },
 });
 

@@ -5,4 +5,8 @@ export default {
   white: "#FFFFFF",
   black: "#000000",
   primary: "#ef506b",
+  pending: "#FFA500",
+  confirmed: "#4CAF50",
+  cancelled: "#F44336",
+  default: "#757575",
 };

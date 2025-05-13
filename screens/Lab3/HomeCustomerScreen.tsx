@@ -5,19 +5,27 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Image,
   StatusBar,
 } from "react-native";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { firestore } from "@/config/firebase";
 import colors from "@/utils/colors";
-import { PlusCircle, UserCircle } from "phosphor-react-native";
+import { PlusCircle, UserCircle, MagnifyingGlass } from "phosphor-react-native";
 import { useAuth } from "@/context/authContext";
 import { Service } from "@/types";
+import { formatCurrency } from "@/utils/common";
+import { TextInput } from "react-native-paper";
+import { Image } from "expo-image";
 
 const HomeCustomerScreen = ({ navigation }: { navigation: any }) => {
   const [services, setServices] = useState<Service[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
+
+  // Filter services based on search query
+  const filteredServices = services.filter((service) =>
+    service.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // fetch services
   useEffect(() => {
@@ -49,7 +57,7 @@ const HomeCustomerScreen = ({ navigation }: { navigation: any }) => {
           <Image
             source={{ uri: item.imageUrl }}
             style={styles.serviceImage}
-            resizeMode="cover"
+            contentFit="cover"
           />
         ) : (
           <View style={styles.serviceImagePlaceholder}>
@@ -60,9 +68,7 @@ const HomeCustomerScreen = ({ navigation }: { navigation: any }) => {
           <Text style={styles.serviceName} numberOfLines={1}>
             {item.name}
           </Text>
-          <Text style={styles.servicePrice}>
-            {item.price?.toLocaleString()} ₫
-          </Text>
+          <Text style={styles.servicePrice}>{formatCurrency(item.price)}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -82,17 +88,47 @@ const HomeCustomerScreen = ({ navigation }: { navigation: any }) => {
         <Image
           source={require("@/assets/logolab3.png")}
           style={styles.logo}
-          resizeMode="contain"
+          contentFit="contain"
+        />
+      </View>
+      <View style={styles.searchContainer}>
+        <TextInput
+          mode="outlined"
+          placeholder="Tìm kiếm dịch vụ..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          style={styles.searchInput}
+          left={
+            <TextInput.Icon
+              icon={() => <MagnifyingGlass size={20} color={colors.primary} />}
+            />
+          }
+          right={
+            searchQuery ? (
+              <TextInput.Icon icon="close" onPress={() => setSearchQuery("")} />
+            ) : null
+          }
+          outlineColor={colors.primary}
+          activeOutlineColor={colors.primary}
         />
       </View>
       <View style={styles.listHeader}>
         <Text style={styles.listTitle}>Danh sách dịch vụ</Text>
       </View>
       <FlatList
-        data={services}
+        data={filteredServices}
         keyExtractor={(item) => item.id}
         renderItem={renderItems}
         contentContainerStyle={{ paddingBottom: 80 }}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              {searchQuery
+                ? "Không tìm thấy dịch vụ phù hợp"
+                : "Chưa có dịch vụ nào"}
+            </Text>
+          </View>
+        }
       />
       <StatusBar backgroundColor={colors.primary} />
     </View>
@@ -183,13 +219,33 @@ const styles = StyleSheet.create({
   },
   serviceName: {
     fontSize: 16,
+    fontWeight: "bold",
     color: "#222",
     marginBottom: 4,
   },
   servicePrice: {
     fontSize: 15,
-    color: "gray",
+    color: colors.primary,
     fontWeight: "bold",
+    marginBottom: 4,
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  searchInput: {
+    backgroundColor: "white",
+    fontSize: 16,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 32,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#666",
   },
 });
 

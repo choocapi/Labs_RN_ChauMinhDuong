@@ -4,20 +4,20 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Image,
   ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { TextInput, Button, HelperText } from "react-native-paper";
 import colors from "@/utils/colors";
 import { useAuth } from "@/context/authContext";
+import { Image } from "expo-image";
 
 const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
   const { resetPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [msgHelperEmail, setMsgHelperEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -38,7 +38,7 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
     setEmailError(isEmailError);
     if (!isEmailError) {
       try {
-        setLoading(true);
+        setIsLoading(true);
         const result = await resetPassword(email);
         if (result.success) {
           Alert.alert("Thành công", result.msg, [
@@ -53,7 +53,7 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
       } catch (error) {
         Alert.alert("Lỗi", "Đã xảy ra lỗi");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     }
   };
@@ -62,7 +62,7 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
-          resizeMode="contain"
+          contentFit="contain"
           source={require("@/assets/logolab3.png")}
           style={styles.logo}
         />
@@ -85,7 +85,7 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
               primary: colors.primary,
             },
           }}
-          disabled={loading}
+          disabled={isLoading}
         />
         <HelperText type="error" visible={emailError}>
           {msgHelperEmail}
@@ -94,9 +94,9 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
           mode="contained"
           onPress={handleResetPassword}
           style={styles.button}
-          disabled={loading}
+          disabled={isLoading}
         >
-          {loading ? (
+          {isLoading ? (
             <ActivityIndicator color={colors.white} />
           ) : (
             <Text style={styles.buttonText}>Send reset password</Text>
@@ -107,7 +107,7 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => {
         <TouchableOpacity
           style={styles.linkButton}
           onPress={() => navigation.navigate("Login")}
-          disabled={loading}
+          disabled={isLoading}
         >
           <Text style={styles.linkText}>Back to login</Text>
         </TouchableOpacity>

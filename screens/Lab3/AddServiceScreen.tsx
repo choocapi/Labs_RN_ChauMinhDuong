@@ -5,23 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  Image,
+  ActivityIndicator,
 } from "react-native";
 import { TextInput } from "react-native-paper";
-import {
-  collection,
-  addDoc,
-  Timestamp,
-  doc,
-  updateDoc,
-  setDoc,
-} from "firebase/firestore";
-import { firestore, storage } from "@/config/firebase";
+import { collection, doc, updateDoc, setDoc } from "firebase/firestore";
+import { firestore } from "@/config/firebase";
 import colors from "@/utils/colors";
 import { useAuth } from "@/context/authContext";
 import * as ImagePicker from "expo-image-picker";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Service } from "@/types";
+import { uploadImage } from "@/services/imageService";
+import { Image } from "expo-image";
 
 const AddServiceScreen = ({
   navigation,
@@ -57,18 +51,6 @@ const AddServiceScreen = ({
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
-  };
-
-  const uploadImage = async (uri: string): Promise<string> => {
-    const fileName = uri.split("/").pop() || "file.jpg";
-    const storageRef = ref(storage, `services/${fileName}`);
-
-    const response = await fetch(uri);
-    const blob = await response.blob();
-
-    await uploadBytes(storageRef, blob);
-    const downloadURL = await getDownloadURL(storageRef);
-    return downloadURL;
   };
 
   const handleSubmit = async () => {
@@ -120,7 +102,11 @@ const AddServiceScreen = ({
         onPress={handleImagePicker}
       >
         {image ? (
-          <Image source={{ uri: image }} style={styles.image} />
+          <Image
+            source={{ uri: image }}
+            style={styles.image}
+            contentFit="cover"
+          />
         ) : (
           <View style={styles.placeholderImage}>
             <Text style={styles.placeholderText}>Chọn ảnh</Text>
@@ -135,6 +121,7 @@ const AddServiceScreen = ({
         mode="outlined"
         value={name}
         onChangeText={setName}
+        outlineColor={colors.primary}
         autoCapitalize="none"
         theme={{
           colors: {
@@ -152,6 +139,7 @@ const AddServiceScreen = ({
         onChangeText={setPrice}
         keyboardType="numeric"
         autoCapitalize="none"
+        outlineColor={colors.primary}
         theme={{
           colors: {
             primary: colors.primary,
@@ -165,11 +153,13 @@ const AddServiceScreen = ({
         disabled={uploading}
       >
         <Text style={styles.buttonText}>
-          {uploading
-            ? "Đang xử lý..."
-            : editingService && editingService.id
-            ? "Cập nhật"
-            : "Thêm"}
+          {uploading ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : editingService && editingService.id ? (
+            "Cập nhật"
+          ) : (
+            "Thêm"
+          )}
         </Text>
       </TouchableOpacity>
     </View>
@@ -193,7 +183,6 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    resizeMode: "cover",
   },
   placeholderImage: {
     width: "100%",

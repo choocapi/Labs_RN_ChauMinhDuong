@@ -1,7 +1,8 @@
 import React from "react";
-import { StyleSheet, View, TouchableOpacity, Image, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import colors from "../utils/colors";
+import { Image } from "expo-image";
 
 const ContactThumbnail = ({ avatar, name, phone, onPress }: any) => {
   return (
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     alignItems: "center",
     justifyContent: "center",
-    maxWidth: '100%',
+    maxWidth: "100%",
   },
   avatar: {
     width: 90,

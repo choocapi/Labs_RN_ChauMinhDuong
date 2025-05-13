@@ -1,19 +1,17 @@
-import React from 'react';
-import { View, Text, TouchableHighlight, StyleSheet, Image } from 'react-native';
-import colors from '../utils/colors';
+import React from "react";
+import { View, Text, TouchableHighlight, StyleSheet } from "react-native";
+import colors from "../utils/colors";
+import { Image } from "expo-image";
 
 const ContactListItem = ({ name, avatar, phone, onPress }: any) => {
   return (
-    <TouchableHighlight 
+    <TouchableHighlight
       underlayColor={colors.greyLight}
       style={styles.container}
       onPress={onPress}
     >
       <View style={styles.contactInfo}>
-        <Image 
-          style={styles.avatar} 
-          source={{ uri: avatar }} 
-        />
+        <Image style={styles.avatar} source={{ uri: avatar }} />
         <View style={styles.details}>
           <Text style={styles.title}>{name}</Text>
           <Text style={styles.subtitle}>{phone}</Text>
@@ -30,8 +28,8 @@ const styles = StyleSheet.create({
   },
   contactInfo: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingTop: 16,
     paddingBottom: 16,
     paddingRight: 24,
@@ -44,13 +42,13 @@ const styles = StyleSheet.create({
     height: 44,
   },
   details: {
-    justifyContent: 'center',
+    justifyContent: "center",
     flex: 1,
     marginLeft: 20,
   },
   title: {
     color: colors.black,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
   subtitle: {

@@ -9,3 +9,7 @@ export { default as SettingScreen } from "./SettingScreen";
 export { default as CustomerScreen } from "./CustomerScreen";
 export { default as TransactionScreen } from "./TransactionScreen";
 export { default as ProfileScreen } from "./ProfileScreen";
+export { default as EditProfileScreen } from "./EditProfileScreen";
+export { default as ChangePasswordScreen } from "./ChangePasswordScreen";
+export { default as AppointmentScreen } from "./AppointmentScreen";
+export { default as AppInitializer } from "./AppInitalizer";

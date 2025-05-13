@@ -5,9 +5,12 @@ import {
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "firebase/auth";
 import { auth, firestore } from "@/config/firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { AuthContextType, UserType } from "@/types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -106,9 +109,67 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const changePassword = async (oldPassword: string, newPassword: string) => {
+    try {
+      if (!auth.currentUser) throw new Error("Không tìm thấy người dùng");
+      const res = await reauthenticateWithCredential(
+        auth.currentUser,
+        EmailAuthProvider.credential(user?.email!, oldPassword)
+      );
+      if (!res.user) {
+        return {
+          success: false,
+          msg: "Mật khẩu cũ không chính xác",
+        };
+      }
+      await updatePassword(res.user, newPassword);
+      return { success: true, msg: "Cập nhật mật khẩu thành công!" };
+    } catch (error: any) {
+      let msg = error.message;
+      if (msg.includes("(auth/requires-recent-login)"))
+        msg = "Vui lòng đăng nhập lại để thực hiện thao tác này";
+      if (msg.includes("(auth/network-request-failed)"))
+        msg = "Mạng không ổn định";
+      return { success: false, msg };
+    }
+  };
+
+  const updateUserInfo = async (
+    uid: string,
+    data: {
+      name?: string;
+      email?: string;
+      role?: string;
+    }
+  ) => {
+    try {
+      await updateDoc(doc(firestore, "users", uid), data);
+      if (user) {
+        setUser({
+          ...user,
+          ...data,
+        });
+      }
+      return { success: true, msg: "Cập nhật thông tin thành công!" };
+    } catch (error: any) {
+      let msg = error.message;
+      if (msg.includes("(auth/network-request-failed)"))
+        msg = "Mạng không ổn định";
+      return { success: false, msg };
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, resetPassword }}
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        resetPassword,
+        changePassword,
+        updateUserInfo,
+      }}
     >
       {children}
     </AuthContext.Provider>
