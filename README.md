@@ -1,41 +1,43 @@
 # Châu Minh Đương - 2124802010036
-## Lab 4
+## Buổi thực hành 5
 
 
-https://github.com/user-attachments/assets/7c405f7b-1252-4218-aea2-38e69f1b96d0
+https://github.com/user-attachments/assets/e419e175-2db7-4951-a172-94a7f0e74e72
 
 
-## Lab 3
-- Demo
+## Buổi thực hành 4
 
 
-https://github.com/user-attachments/assets/20bdc703-b814-47bd-a1f1-ea08f7a86def
+https://github.com/user-attachments/assets/998c773b-d185-4037-9164-72c2aa50befc
 
 
-## Lab 2
-- Demo
+## Buổi thực hành 3
 
 
-https://github.com/user-attachments/assets/1d3d052e-4692-459c-83f9-2975185675ba
+https://github.com/user-attachments/assets/9b34514e-2902-4d76-99ee-a04dadda3c84
 
 
-## Lab 1
+## Buổi thực hành 2
+
+
+https://github.com/user-attachments/assets/e17db18d-1d23-4e9a-8e29-e06bfd306775
+
+
+## Buổi thực hành 1
 Lab này hôm trước em dùng template project sử dụng router có sẵn của expo, bây giờ em đổi sang template giống thầy để làm được navigation. Nên lịch sử commit không đúng ngày làm bài ạ!
 Mong thầy thông cảm!
 - Demo mới
 
 
-https://github.com/user-attachments/assets/93a17afe-38aa-48d2-890b-c26ab86f8ef0
+https://github.com/user-attachments/assets/5454561c-99c8-42b3-9dac-2d6c957ce4f4
 
 
 - Demo cũ
 
 
-https://github.com/user-attachments/assets/1177af7c-60ea-4e0d-bbcf-842195c55368
+https://github.com/user-attachments/assets/af636cdb-c0a1-45f4-98fd-1f676504f006
 
 
 
-
-https://github.com/user-attachments/assets/f525494a-afd5-4208-a736-bf475771c217
-
+https://github.com/user-attachments/assets/47f4ec30-bc1c-494b-ac98-6ea2c8f46981
 
